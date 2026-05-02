@@ -4,8 +4,7 @@
 今日核心目标：
 
 1. **构建支持OpenAI与通义千问的双核AI助理API接口**，实现模型动态切换功能。
-2. **开发Web界面**，通过下拉菜单允许用户实时选择模型，兼顾灵活性与成本效益。
-3. **整合免费额度策略**，确保通义千问API的合理使用，同时保留OpenAI接口的兼容性。
+2. **整合免费额度策略**，确保通义千问API的合理使用，同时保留OpenAI接口的兼容性。
 
 **二、关键技术组件**
 
@@ -43,61 +42,8 @@
     - 统一错误处理流程，确保异常时保存对话历史。
     - 封装模型调用函数，提升代码复用性（如`call_openai()`与`call_dashscope()`）。
 
-**四、关键代码片段**
 
-```
-# app.py 核心逻辑（节选）
-
-# 加载密钥并初始化客户端
-openai_key = os.getenv("OPENAI_API_KEY")
-dashscope_key = os.getenv("DASHSCOPE_API_KEY")
-client_openai = OpenAI(api_key=openai_key) if openai_key else None
-dashscope.api_key = dashscope_key if dashscope_key else None
-
-# 生成模型选项
-model_options = []
-if client_openai:
-    model_options.append("OpenAI (GPT-4o)")
-if dashscope_key:
-    model_options.append("通义千问 (Qwen-Turbo)")
-selected_model = st.sidebar.selectbox("选择模型", model_options)
-
-# 根据选择调用API
-if selected_model == "OpenAI (GPT-4o)":
-    stream = client_openai.chat.completions.create(
-        model="gpt-4o",
-        messages=st.session_state.messages,
-        stream=True
-    )
-    for chunk in stream:
-        # 处理流式输出...
-elif selected_model == "通义千问 (Qwen-Turbo)":
-    response = Generation.call(
-        model='qwen-turbo',
-        messages=st.session_state.messages,
-        incremental_output=True,  # 流式输出
-        stream=True
-    )
-    for chunk in response:
-        if chunk.status_code == 200:
-            # 处理流式输出...
-        else:
-            st.error(f"通义千问错误: {chunk.message}")
-```
-
-**五、关键功能截图**
-（附：Web界面示意图，展示模型选择下拉菜单与实时对话效果）
-
-**六、明日计划（周四）**
-
-1. **集成Advanced RAG系统**：
-    - 实现基于向量数据库的检索增强生成（RAG），提升回答准确性。
-    - 支持文件上传与知识库关联，结合通义千问或OpenAI完成上下文对话。
-2. **优化双模型切换逻辑**：
-    - 添加模型性能监控指标（延迟、准确率），辅助用户决策。
-    - 探索自动切换策略（如通义千问额度不足时降级至OpenAI免费层）。
-
-**七、总结与价值**
+**四、总结与价值**
 
 - **灵活性与成本平衡**：通过双模型架构，用户可灵活切换高性价比方案（通义千问）与高性能模型（OpenAI）。
 - **生产级兼容性**：完整集成密钥检测、错误容错机制，确保服务稳定性。
@@ -106,7 +52,7 @@ elif selected_model == "通义千问 (Qwen-Turbo)":
 **技术标签**：#双模型切换 #OpenAI #通义千问 #Streamlit #流式响应 #API集成
 **作者**：[你的GitHub用户名]
 **日期**：2026-04-15
-**仓库链接**：[GitHub仓库地址]
+**仓库链接**：https://github.com/lin-keno/tech-journal.git
 **备注**：完整代码、界面截图及RAG系统设计文档详见仓库。
 
 ---
