@@ -52,7 +52,7 @@
 **技术标签**：#双模型切换 #OpenAI #通义千问 #Streamlit #流式响应 #API集成
 **作者**：lin-keno
 **日期**：2026-04-20
-**仓库链接**：https://github.com/lin-keno/tech-journal/02代码.git
+**仓库链接**：https://github.com/lin-keno/tech-journal/02 代码.git
 **备注**：完整代码、界面截图及RAG系统设计文档详见仓库。
 
 ---
