@@ -1,0 +1,104 @@
+明确具体的指令
+○ 
+使用分隔符清晰界定输入：通过引号、花括号{}、XML标签等明确任务边界，避免模型误解。
+○ 
+要求结构化输出：指定输出格式（如JSON、表格、列表），便于后续处理。例如：“将结果以JSON格式输出，包含字段A和B”。
+○ 
+提供示例（Few-Shot Prompting）：通过少量示例引导模型理解任务逻辑，例如翻译任务中先给出“苹果→apple”，再让模型翻译“香蕉”。
+○ 
+避免模糊指令：明确任务目标、范围、限制。例如，指定内容长度、风格、受众等（如“写500字医疗AI文章，聚焦诊断案例”）。
+2. 
+给模型“思考时间”
+○ 
+拆分任务步骤：引导模型分步推理，例如数学问题中要求“先列条件→确定公式→计算→验证结果”。
+Eg：
+Prompt_1=f”””
+Your task is to perform the following actions:
+1.summarize the following text delimited by triple backticks within 1 sentence
+2.translate the summary into French
+3.list each name in the French summary
+4.output a json object that contains ```
+输出时也可以限制结构如：
+Use the following format:
+Text:<text to summarize>
+Summary:<summary>
+Translation:<summary translation>
+Name:<list of name in Italian summary>
+
+Text:<text>
+”””
+○ 
+要求解释推理过程：指示模型在回答前先分析思路（如“先说明推理步骤，再总结结论”），减少错误和幻觉。
+Eg:
+Prompt_2=f’’’ your task is to determine if the student’s solution is correct or not.
+To solve the problem do the following:
+-first, work out your own solution to the problem.
+-then compare your solution to the student’s solution and evaluate if the student’s solution is correct or not .
+Don’t decide if the student’s solution is correct until you have done the problem yourself.
+
+Use  the following format:
+Question:
+{Question here}
+Student’s solution:
+{Student’s solution here}
+Actual solution:
+{ Steps to work out the solution and your solution here}
+Is the student’s solution the same as actual solution
+{ yes or no}
+Student grade:
+{correct or incorrect}
+
+另外，模型知识边界，产生幻觉
+Reducing hallucinations:
+first find relevant information,
+Then answer the question based on the relevant information.
+○ 
+分阶段完成任务：对复杂任务（如写报告）先生成大纲，确认后再扩展内容。
+
+
+迭代
+
+Iterative prompt development 
+ Idea—> prompt—>experiment result—>refine the idea and prompt
+
+Process:
+Try something
+Analyze where the result does not give what you want
+Clarify instructions, give more time to think
+Refine prompts with a batch of examples
+
+
+
+
+实操： summarize text / extract relevant information 
+Prompt = f’’’
+Your task is to generate a short summary of a product review from an  e-commerce site.
+Summarize the review below,  delimited by triple backticks, in at most 30 words.
+Review:’’’{prod_review}’’’
+’’’
+
+Concentrate on giving feedback to shipping department/pricing department  
+Prompt = f’’’
+Your task is to generate a short summary of a product review from an site to give feedback to shipping department.
+Summarize the review below,  delimited by triple backticks, in at most 30 words.
+Review:’’’{prod_review}’’’
+’’’
+
+
+
+Prompt = f’’’
+Your task is to generate a short summary of a product review from an e-commerce  site.
+Summarize the review below,  delimited by triple backticks, in at most 30 words, and focusing on any aspects that are relevant to the price and perceived value.
+Review:’’’{prod_review}’’’
+’’’
+
+
+ Also for lots of review:
+ 
+Reviews = [review_1, review_2, review_3]
+For i in range (len(Reviews)):
+       Prompt = f’’’
+       Your task is to generate a short summary of a product review from an e-commerce site
+        Summarize the review below,  delimited by triple backticks in at most 20 words.
+        Reviews: ’’’{reviews[I]}’’’
+’’’ 
